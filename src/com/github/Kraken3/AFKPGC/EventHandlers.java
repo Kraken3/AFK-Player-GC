@@ -12,12 +12,11 @@ class EventHandlers implements Listener {
 	
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {
-		LastActivity.lastActivities.remove(event.getPlayer().getEntityId());
-		//AFKPGC.logger.info(event.getPlayer().getDisplayName() + " quit, that bastard!");		
+		LastActivity.lastActivities.remove(event.getPlayer().getEntityId());	
 	}
 	
 	@EventHandler
-	public void onPlayerLogin(PlayerLoginEvent event) {		
+	public void onPlayerLogin(PlayerLoginEvent event) {				
 		LastActivity la = new LastActivity();
 		la.playerName = event.getPlayer().getName();
 		la.timeOfLastActivity = System.currentTimeMillis();		
@@ -33,11 +32,11 @@ class EventHandlers implements Listener {
 	//EVENTS THAT REGISTER PLAYER ACTIVITY
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerMoveEvent(PlayerMoveEvent event) {
+	public void onPlayerMoveEvent(PlayerMoveEvent event) {			
 		registerActivity(event.getPlayer().getEntityId());
 	}	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerChatEvent(PlayerChatEvent event) {	
+	public void onPlayerChatEvent(PlayerChatEvent event) {
 		registerActivity(event.getPlayer().getEntityId());
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)

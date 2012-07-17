@@ -1,7 +1,7 @@
 package com.github.Kraken3.AFKPGC;
 
 import java.util.Map;
-import java.util.Set;
+
 
 class Kicker implements Runnable {
 	public static int[] kickThresholds;
@@ -9,6 +9,7 @@ class Kicker implements Runnable {
 	public static String message_on_kick;
 	
 	public void run() {	
+		
 		   if(!AFKPGC.enabled) return;		
 		   int numberOfPlayersOnline = LastActivity.lastActivities.size();
 		   if(numberOfPlayersOnline == 0) return;
@@ -25,8 +26,8 @@ class Kicker implements Runnable {
 		
 		   LastActivity.currentTime = System.currentTimeMillis();
 		   Map<Integer, LastActivity> lastActivities = LastActivity.lastActivities;				   
-		   Set<Integer> keySet = lastActivities.keySet();
-		   for(Integer i:keySet){				   
+		   Integer[] keySet = lastActivities.keySet().toArray(new Integer[0]);		   
+		   for(Integer i:keySet){	 
 			   LastActivity la = lastActivities.get(i);			  
 			   long time = LastActivity.currentTime - la.timeOfLastActivity;
 			   long timeOld = la.timeOflastKickerPass - la.timeOfLastActivity;
