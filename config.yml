@@ -17,21 +17,21 @@ kick_thresholds:
 Comment: warnings filed reads the first number, the rest is text to be sent to a player
   
 warnings:
-  - 1 §4AFK Plugin - You'll be kicked in 1 second
-  - 2 §4AFK Plugin - You'll be kicked in 2 seconds
-  - 3 §4AFK Plugin - You'll be kicked in 3 seconds
-  - 4 §4AFK Plugin - You'll be kicked in 4 seconds
-  - 5 §4AFK Plugin - You'll be kicked in 5 seconds
-  - 10 §4AFK Plugin - You'll be kicked in 10 seconds
-  - 60 §4AFK Plugin - You'll be kicked in 1 minute
-  - 300 §4AFK Plugin - You'll be kicked in 5 minutes
-  - 600 §4AFK Plugin - You'll be kicked in 10 minutes
-  - 1800 §4AFK Plugin - You'll be kicked in 30 minutes
-  - 3600 §4AFK Plugin - You'll be kicked in 1 hour
+  - 1 Â§4AFK Plugin - You'll be kicked in 1 second
+  - 2 Â§4AFK Plugin - You'll be kicked in 2 seconds
+  - 3 Â§4AFK Plugin - You'll be kicked in 3 seconds
+  - 4 Â§4AFK Plugin - You'll be kicked in 4 seconds
+  - 5 Â§4AFK Plugin - You'll be kicked in 5 seconds
+  - 10 Â§4AFK Plugin - You'll be kicked in 10 seconds
+  - 60 Â§4AFK Plugin - You'll be kicked in 1 minute
+  - 300 Â§4AFK Plugin - You'll be kicked in 5 minutes
+  - 600 Â§4AFK Plugin - You'll be kicked in 10 minutes
+  - 1800 Â§4AFK Plugin - You'll be kicked in 30 minutes
+  - 3600 Â§4AFK Plugin - You'll be kicked in 1 hour
   
   
 Comment: Yay, rainbows! :)  
-kick_message: §cYou §6were §ekicked §adue §9to in§5activity
+kick_message: Â§cYou Â§6were Â§ekicked Â§adue Â§9to inÂ§5activity
 
 
 Comment: Various strings. 
@@ -39,8 +39,8 @@ Comment: Various strings.
 Str0: "Pluging is not running"
 Str1: "AFK Player Garbage Collector has been enabled"
 Str2: "AFK Player Garbage Collector has been disabled"
-Str3: "§a%d players online: kicking after %sof being AFK"
-Str4: "§a%d-%d players online: kicking after %sof being AFK"
+Str3: "Â§a%d players online: kicking after %sof being AFK"
+Str4: "Â§a%d-%d players online: kicking after %sof being AFK"
 Str5: "New configuration accepted, plugin enabled"
 Str6: "New configuration rejected, plugin disabled"
 Str7: "Plugin disabled"
