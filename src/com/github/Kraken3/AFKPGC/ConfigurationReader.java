@@ -10,10 +10,13 @@ public class ConfigurationReader {
 		
 		//TODO: Change so that the plugin copies jar internal default config.yml into FS only when one doesn't exist there;
 		AFKPGC.plugin.saveDefaultConfig();
+		AFKPGC.plugin.reloadConfig();
 		FileConfiguration conf = AFKPGC.plugin.getConfig();				
 		
 		int max_players = AFKPGC.plugin.getServer().getMaxPlayers();
-		Kicker.kickThresholds = new int[max_players];	
+		int[] kickThresholds = new int[max_players];	
+		for(int i = 0; i < max_players; i++) kickThresholds[i] = -1;
+		
 		
 		List<String> ktl =  conf.getStringList("kick_thresholds");
 		int[] nums = new int[3];
@@ -22,28 +25,26 @@ public class ConfigurationReader {
 			parseNaturals(s, nums);
 			int min = nums[0], max = nums[1], t = nums[2];
 			if(min > max || min < 1 || max < 1 || t < 0){
-				AFKPGC.ErrorMessage("Configuration file error: " + s);
+				Message.error(11,s);
 				return false;
-			}
-			
+			}			
 						
 			for(int i = min; i <= max; i++){
 				if(i <= max_players){
-					Kicker.kickThresholds[i-1] = t;
+					if(kickThresholds[i-1] != -1) Message.warning(10, s);
+					kickThresholds[i-1] = t;
 				} 
 			}			
 		}
 		
 		boolean foundEmptyThreshold = false;
 		for(int i = 0; i < max_players; i++){			
-			if(Kicker.kickThresholds[i] == 0){
-				AFKPGC.ErrorMessage("Configuration file incomplete - plugin doesn't know when to kick players when there are " + (i+1) + " players online");
+			if(kickThresholds[i] == -1){
+				Message.error(12, i+1);
 				foundEmptyThreshold = true;				
 			}			
 		}		
 		if(foundEmptyThreshold) return false;
-		
-		Kicker.message_on_kick = conf.getString("kick_message");	
 		
 		ArrayList<Warning> warnings = new ArrayList<Warning>();		
 		ktl =  conf.getStringList("warnings");
@@ -68,7 +69,11 @@ public class ConfigurationReader {
 		int wlen = warnings.size();
 		Warning[] wa = new Warning[wlen];
 		for(int i = 0; i < wlen; i++) wa[i] = warnings.get(i);
+		
+		
+		Kicker.message_on_kick = conf.getString("kick_message");
 		Kicker.warnings = wa;
+		Kicker.kickThresholds = kickThresholds;		
 		
 		return true;
 	}
