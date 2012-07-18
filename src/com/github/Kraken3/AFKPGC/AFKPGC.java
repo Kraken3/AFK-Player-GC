@@ -52,6 +52,8 @@ public class AFKPGC extends JavaPlugin {
 		if (cmd.getName().equalsIgnoreCase("afkpgc")){ 
 			if(args[0].equalsIgnoreCase("times")){
 				return onCommandTimes(player);						
+			} else if(args[0].equalsIgnoreCase("amistillalive")){
+				if(player != null) Kicker.amIStillAlivePlayer = player.getName();
 			} else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("list") ||  args[0].equalsIgnoreCase("stop") ){
 				if(player != null && !player.isOp()) { 
 					player.sendMessage("Only OP can do that. ");
@@ -60,7 +62,8 @@ public class AFKPGC extends JavaPlugin {
 				
 				if(args[0].equalsIgnoreCase("reload"))    return onCommandReload(player);				
 				else if(args[0].equalsIgnoreCase("list")) return onCommandList(player, args);					
-				else if(args[0].equalsIgnoreCase("stop")) return onCommandStop(player);				
+				else if(args[0].equalsIgnoreCase("stop")) return onCommandStop(player);	
+				
 				
 			} else return false;
 			
@@ -114,8 +117,10 @@ public class AFKPGC extends JavaPlugin {
 	
 	private boolean onCommandList(Player player, String[] args){
 		int p = 10;
-		if(args.length == 2){						
-			p = Integer.parseInt(args[1]);						
+		if(args.length == 2){		
+			try{
+				p = Integer.parseInt(args[1]);
+			} catch (Exception e){}
 		}					
 		Message.send(player, 8, p);
 		
@@ -152,6 +157,11 @@ public class AFKPGC extends JavaPlugin {
 		                               b += s + "s ";	
 		return b;		
 	}
+	
+	
+	public static void removerPlayer(int id){
+		if(LastActivity.lastActivities.containsKey(id))	LastActivity.lastActivities.remove(id);	
+	}
 
 }
 
@@ -167,7 +177,7 @@ class Warning{
 
 
 class LastActivity{
-	public static Map<Integer, LastActivity> lastActivities = new HashMap<Integer, LastActivity>();
+	public static Map<Integer, LastActivity> lastActivities = new TreeMap<Integer, LastActivity>();
 	public static long currentTime; 	//OCD compels me to save a few System.currentTimeMillis() calls..
 	public String playerName;	
 	public long timeOfLastActivity;

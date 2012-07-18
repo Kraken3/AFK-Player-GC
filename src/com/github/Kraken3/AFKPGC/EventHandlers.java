@@ -1,5 +1,6 @@
 package com.github.Kraken3.AFKPGC;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,21 +12,30 @@ import org.bukkit.event.player.*;
 class EventHandlers implements Listener {
 	
 	@EventHandler
-	public void onPlayerQuitEvent(PlayerQuitEvent event) {
-		LastActivity.lastActivities.remove(event.getPlayer().getEntityId());	
+	public void onPlayerQuitEvent(PlayerQuitEvent event) {	
+		AFKPGC.removerPlayer(event.getPlayer().getEntityId());		
 	}
+
 	
 	@EventHandler
-	public void onPlayerLogin(PlayerLoginEvent event) {				
-		LastActivity la = new LastActivity();
-		la.playerName = event.getPlayer().getName();
-		la.timeOfLastActivity = System.currentTimeMillis();		
-		LastActivity.lastActivities.put(event.getPlayer().getEntityId(),la);		
+	public void onPlayerLogin(PlayerLoginEvent event) {	
+		Player p;
+		if((p = event.getPlayer()) == null) return;
+		LastActivity la = new LastActivity();		
+		la.playerName = p.getName();
+		la.timeOfLastActivity = System.currentTimeMillis();
+		
+		int id = p.getEntityId();
+		
+		//sanity check
+		if(LastActivity.lastActivities.containsKey(id)) AFKPGC.removerPlayer(id);
+		LastActivity.lastActivities.put(p.getEntityId(),la);
+		
 	}	
 	
 	
 	public void registerActivity(int id){
-		LastActivity.lastActivities.get(id).timeOfLastActivity = LastActivity.currentTime;
+		if(LastActivity.lastActivities.containsKey(id)) LastActivity.lastActivities.get(id).timeOfLastActivity = LastActivity.currentTime;
 	}
 	
 	

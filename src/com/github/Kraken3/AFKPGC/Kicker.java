@@ -2,15 +2,26 @@ package com.github.Kraken3.AFKPGC;
 
 import java.util.Map;
 
+import org.bukkit.entity.Player;
+
 
 class Kicker implements Runnable {
 	public static int[] kickThresholds;
 	public static Warning[] warnings;
 	public static String message_on_kick;
+	public static String amIStillAlivePlayer;  // sends a message to this player
 	
-	public void run() {	
+	public void run() {				
+			if(amIStillAlivePlayer != null){			
+					Player p;
+					if((p = AFKPGC.plugin.getServer().getPlayer(amIStillAlivePlayer)) != null){
+						p.sendMessage("AFKPGC plugin is still alive");						
+					}	
+					amIStillAlivePlayer = null;
+			}		   
 		
-		   if(!AFKPGC.enabled) return;		
+		   if(!AFKPGC.enabled) return;			   
+		   
 		   int numberOfPlayersOnline = LastActivity.lastActivities.size();
 		   if(numberOfPlayersOnline == 0) return;
 		   if(numberOfPlayersOnline > kickThresholds.length) {			   
@@ -27,7 +38,8 @@ class Kicker implements Runnable {
 		   LastActivity.currentTime = System.currentTimeMillis();
 		   Map<Integer, LastActivity> lastActivities = LastActivity.lastActivities;				   
 		   Integer[] keySet = lastActivities.keySet().toArray(new Integer[0]);		   
-		   for(Integer i:keySet){	 
+		   for(Integer i:keySet){
+			   if(!lastActivities.containsKey(i)) continue;
 			   LastActivity la = lastActivities.get(i);			  
 			   long time = LastActivity.currentTime - la.timeOfLastActivity;
 			   long timeOld = la.timeOflastKickerPass - la.timeOfLastActivity;
@@ -38,15 +50,19 @@ class Kicker implements Runnable {
 			   for(int j = 0; j < warningslen; j++){
 				   int t = warnings[j].time;			   
 				  				   
-				   if(time >= threshold-t && timeOld < threshold-t) {					   
-					   AFKPGC.plugin.getServer().getPlayer(la.playerName).sendMessage(warnings[j].message);
+				   if(time >= threshold-t && timeOld < threshold-t) {	
+					   Player p;
+					   if((p = AFKPGC.plugin.getServer().getPlayer(la.playerName)) != null)	 p.sendMessage(warnings[j].message);
 				   }
 			   }	
 			   
 			   if(time > threshold){ 
-				   AFKPGC.plugin.getServer().getPlayer(la.playerName).kickPlayer(message_on_kick);				   
-				   int t = (int)((LastActivity.currentTime - la.timeOfLastActivity)/1000);
-				   Message.send(14, la.playerName, AFKPGC.readableTimeSpan(t)); 
+				   Player p;
+				   if((p = AFKPGC.plugin.getServer().getPlayer(la.playerName)) != null){
+					   p.kickPlayer(message_on_kick);
+					   int t = (int)((LastActivity.currentTime - la.timeOfLastActivity)/1000);
+					   Message.send(14, la.playerName, AFKPGC.readableTimeSpan(t)); 
+				   }	
 			   }
 			   
 		   }
