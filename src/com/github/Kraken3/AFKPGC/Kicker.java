@@ -36,9 +36,9 @@ class Kicker implements Runnable {
 		   if(threshold == 0) return;
 		
 		   LastActivity.currentTime = System.currentTimeMillis();
-		   Map<Integer, LastActivity> lastActivities = LastActivity.lastActivities;				   
-		   Integer[] keySet = lastActivities.keySet().toArray(new Integer[0]);		   
-		   for(Integer i:keySet){
+		   Map<String, LastActivity> lastActivities = LastActivity.lastActivities;				   
+		   String[] keySet = lastActivities.keySet().toArray(new String[0]);		   
+		   for(String i:keySet){
 			   if(!lastActivities.containsKey(i)) continue;
 			   LastActivity la = lastActivities.get(i);			  
 			   long time = LastActivity.currentTime - la.timeOfLastActivity;
@@ -52,16 +52,18 @@ class Kicker implements Runnable {
 				  				   
 				   if(time >= threshold-t && timeOld < threshold-t) {	
 					   Player p;
-					   if((p = AFKPGC.plugin.getServer().getPlayer(la.playerName)) != null)	 p.sendMessage(warnings[j].message);
+					   if((p = AFKPGC.plugin.getServer().getPlayer(i)) != null)	 p.sendMessage(warnings[j].message);
 				   }
 			   }	
 			   
 			   if(time > threshold){ 
 				   Player p;
-				   if((p = AFKPGC.plugin.getServer().getPlayer(la.playerName)) != null){
-					   p.kickPlayer(message_on_kick);
+				   if((p = AFKPGC.plugin.getServer().getPlayer(i)) != null){
+					   //kicking a player
+					   p.kickPlayer(message_on_kick);					   
+					   AFKPGC.removerPlayer(i);						   
 					   int t = (int)((LastActivity.currentTime - la.timeOfLastActivity)/1000);
-					   Message.send(14, la.playerName, AFKPGC.readableTimeSpan(t)); 
+					   Message.send(14, i, AFKPGC.readableTimeSpan(t)); 
 				   }	
 			   }
 			   

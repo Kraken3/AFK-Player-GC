@@ -54,6 +54,7 @@ public class AFKPGC extends JavaPlugin {
 				return onCommandTimes(player);						
 			} else if(args[0].equalsIgnoreCase("amistillalive")){
 				if(player != null) Kicker.amIStillAlivePlayer = player.getName();
+				return true;
 			} else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("list") ||  args[0].equalsIgnoreCase("stop") ){
 				if(player != null && !player.isOp()) { 
 					player.sendMessage("Only OP can do that. ");
@@ -119,14 +120,15 @@ public class AFKPGC extends JavaPlugin {
 		int p = 10;
 		if(args.length == 2){		
 			try{
-				p = Integer.parseInt(args[1]);
+				p = Integer.parseInt(args[1]);				
 			} catch (Exception e){}
-		}					
+		}
+		if(p < 0) p = 10;
 		Message.send(player, 8, p);
 		
 		ArrayList<LastActivity> las = new ArrayList<LastActivity>();
-		Set<Integer> set = LastActivity.lastActivities.keySet();
-		for(int i:set) las.add(LastActivity.lastActivities.get(i));	
+		Set<String> set = LastActivity.lastActivities.keySet();
+		for(String i:set) las.add(LastActivity.lastActivities.get(i));	
 		int laslen = las.size();
 		Collections.sort(las, new Comparator<LastActivity>(){						
 			public int compare(LastActivity arg0, LastActivity arg1) {							
@@ -159,9 +161,26 @@ public class AFKPGC extends JavaPlugin {
 	}
 	
 	
-	public static void removerPlayer(int id){
-		if(LastActivity.lastActivities.containsKey(id))	LastActivity.lastActivities.remove(id);	
+	public static void removerPlayer(String name){
+		if(LastActivity.lastActivities.containsKey(name))LastActivity.lastActivities.remove(name);	
 	}
+	
+	public static void addPlayer(String name){
+		if(name == null) return;
+		
+		LastActivity la;		
+		if(LastActivity.lastActivities.containsKey(name)){
+			la = LastActivity.lastActivities.get(name);			
+		} else {
+			la = new LastActivity();
+			LastActivity.lastActivities.put(name,la);			
+		}				
+		
+		la.timeOfLastActivity = System.currentTimeMillis();
+		la.timeOflastKickerPass = System.currentTimeMillis();
+		la.playerName = name;
+	}
+	
 
 }
 
@@ -177,9 +196,9 @@ class Warning{
 
 
 class LastActivity{
-	public static Map<Integer, LastActivity> lastActivities = new TreeMap<Integer, LastActivity>();
-	public static long currentTime; 	//OCD compels me to save a few System.currentTimeMillis() calls..
-	public String playerName;	
+	public static Map<String, LastActivity> lastActivities = new TreeMap<String, LastActivity>();
+	public static long currentTime; 	//OCD compels me to save a few System.currentTimeMillis() calls..	
 	public long timeOfLastActivity;
 	public long timeOflastKickerPass; //time of the last Kicker.run call, relevant for warnings
+	public String playerName; //useful only in onCommandList
 }
