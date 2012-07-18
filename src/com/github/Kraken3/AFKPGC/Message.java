@@ -37,8 +37,6 @@ public class Message {
 		AFKPGC.logger.log(Level.SEVERE, sb.toString());		
 	}
 	
-	
-	
 	public static void send(Player player, int str, Object... args){
 		send(player, stringResource(str), args);
 	}

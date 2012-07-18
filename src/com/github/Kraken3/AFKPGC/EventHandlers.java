@@ -1,85 +1,85 @@
 package com.github.Kraken3.AFKPGC;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 
-class EventHandlers implements Listener {
+class EventHandlers implements Listener {		
+	
+	@EventHandler
+	public void PlayerJoinEvent(PlayerLoginEvent event) {	
+		AFKPGC.addPlayer(event.getPlayer().getName());
+	}
+	
+	//seemingly duplicate events are here for resiliency/defensive programming 
+	//as the plugin used to crash for some unobvious reason. I hate it too.
+	@EventHandler
+	public void onPlayerLogin(PlayerLoginEvent event) {	
+		AFKPGC.addPlayer(event.getPlayer().getName());
+	}	
+	
+	@EventHandler
+	public void PlayerKickEvent(PlayerQuitEvent event) {	
+		AFKPGC.removerPlayer(event.getPlayer().getName());
+	}
 	
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {	
-		AFKPGC.removerPlayer(event.getPlayer().getEntityId());		
-	}
-
-	
-	@EventHandler
-	public void onPlayerLogin(PlayerLoginEvent event) {	
-		Player p;
-		if((p = event.getPlayer()) == null) return;
-		LastActivity la = new LastActivity();		
-		la.playerName = p.getName();
-		la.timeOfLastActivity = System.currentTimeMillis();
-		
-		int id = p.getEntityId();
-		
-		//sanity check
-		if(LastActivity.lastActivities.containsKey(id)) AFKPGC.removerPlayer(id);
-		LastActivity.lastActivities.put(p.getEntityId(),la);
-		
+		AFKPGC.removerPlayer(event.getPlayer().getName());
 	}	
+		
 	
-	
-	public void registerActivity(int id){
-		if(LastActivity.lastActivities.containsKey(id)) LastActivity.lastActivities.get(id).timeOfLastActivity = LastActivity.currentTime;
+	public void registerActivity(String playerName){
+		if(playerName == null) return;
+		if(!LastActivity.lastActivities.containsKey(playerName)) AFKPGC.addPlayer(playerName);			
+		LastActivity.lastActivities.get(playerName).timeOfLastActivity = LastActivity.currentTime;
 	}
 	
 	
 	//EVENTS THAT REGISTER PLAYER ACTIVITY
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerMoveEvent(PlayerMoveEvent event) {			
-		registerActivity(event.getPlayer().getEntityId());
+		registerActivity(event.getPlayer().getName());
 	}	
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerChatEvent(PlayerChatEvent event) {
-		registerActivity(event.getPlayer().getEntityId());
+		registerActivity(event.getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {
-		registerActivity(event.getPlayer().getEntityId());
+		registerActivity(event.getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerDropItemEvent(PlayerDropItemEvent event) {	
-		registerActivity(event.getPlayer().getEntityId());
+		registerActivity(event.getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
-		registerActivity(event.getPlayer().getEntityId());
+		registerActivity(event.getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
-		registerActivity(event.getPlayer().getEntityId());
+		registerActivity(event.getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {	
-		registerActivity(event.getPlayer().getEntityId());
+		registerActivity(event.getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onEnchantItemEvent(EnchantItemEvent event) {		
-		registerActivity(event.getEnchanter().getPlayer().getEntityId());
+		registerActivity(event.getEnchanter().getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPrepareItemEnchantEvent(PrepareItemEnchantEvent event) {	
-		registerActivity(event.getEnchanter().getPlayer().getEntityId());
+		registerActivity(event.getEnchanter().getPlayer().getName());
 	}
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onInventoryClickEvent(InventoryClickEvent event) {	
-		registerActivity(event.getWhoClicked().getEntityId());
+		registerActivity(event.getWhoClicked().getName());
 	}
 
 }
