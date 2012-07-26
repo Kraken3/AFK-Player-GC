@@ -32,7 +32,14 @@ public class AFKPGC extends JavaPlugin {
 			   public void run() {		
 				   LastActivity.currentTime = System.currentTimeMillis();				 
 			   }
-		}, 0, 1L);		
+		}, 0, 1L);	
+		
+		//Because bukkit..
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+			   public void run() {		
+				   LastActivity.FixInconsitencies();	 
+			   }
+		}, 0, 6000L);		
 		
 		Message.send(1);
 	}
@@ -52,21 +59,17 @@ public class AFKPGC extends JavaPlugin {
 		if (cmd.getName().equalsIgnoreCase("afkpgc")){ 
 			if(args[0].equalsIgnoreCase("times")){
 				return onCommandTimes(player);						
-			} else if(args[0].equalsIgnoreCase("amistillalive")){
-				if(player != null) Kicker.amIStillAlivePlayer = player.getName();
-				return true;
+			} else if(args[0].equalsIgnoreCase("info")){				
+				return onCommandInfo(player);
 			} else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("list") ||  args[0].equalsIgnoreCase("stop") ){
 				if(player != null && !player.isOp()) { 
 					player.sendMessage("Only OP can do that. ");
 					return true;
-				}
-				
+				}				
 				if(args[0].equalsIgnoreCase("reload"))    return onCommandReload(player);				
 				else if(args[0].equalsIgnoreCase("list")) return onCommandList(player, args);					
-				else if(args[0].equalsIgnoreCase("stop")) return onCommandStop(player);	
-				
-				
-			} else return false;
+				else if(args[0].equalsIgnoreCase("stop")) return onCommandStop(player);		
+			}
 			
 		} 
 		return false;
@@ -112,6 +115,14 @@ public class AFKPGC extends JavaPlugin {
 	private boolean onCommandStop(Player player){
 		Message.send(player, 7);
 		AFKPGC.enabled = false;
+		return true;
+	}
+	
+	private boolean onCommandInfo(Player player){		 
+		Message.send(player, 15, plugin.getDescription().getVersion(), AFKPGC.enabled ? "enabled" : "disabled");
+		if(Kicker.amIStillAlivePlayer == null) Kicker.amIStillAlivePlayer = new ArrayList<String>();
+		if(player != null)	Kicker.amIStillAlivePlayer.add(player.getName());
+		else Kicker.amIStillAlivePlayer.add(null);
 		return true;
 	}
 	
@@ -201,4 +212,25 @@ class LastActivity{
 	public long timeOfLastActivity;
 	public long timeOflastKickerPass; //time of the last Kicker.run call, relevant for warnings
 	public String playerName; //useful only in onCommandList
+	
+	//let's be polite.. I strongly dislike bukkit.. onPlayerQuitEvent doesn't trigger on all
+	//player log off events for some reason. This causes LastActivity.lastActivities to contain more players
+	//than there are playing on the server. FixInconsitencies() fixes this problem.
+	static public void FixInconsitencies(){
+		Map<String, LastActivity> lastActivities = LastActivity.lastActivities;	
+		Player[] players = AFKPGC.plugin.getServer().getOnlinePlayers();
+		TreeSet<String> playersTree = new TreeSet<String>();		
+		
+		for(Player p:players) {
+			String name = p.getName();
+			if(!lastActivities.containsKey(name)) AFKPGC.addPlayer(p.getName());	
+			playersTree.add(name);
+		}				
+		
+		String[] keySet = lastActivities.keySet().toArray(new String[0]);		   
+		for(String i:keySet){
+			if(!playersTree.contains(i)) AFKPGC.removerPlayer(i);			   
+		}		
+		
+	}
 }

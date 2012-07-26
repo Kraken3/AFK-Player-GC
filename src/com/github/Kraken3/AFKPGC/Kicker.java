@@ -1,5 +1,6 @@
 package com.github.Kraken3.AFKPGC;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.entity.Player;
@@ -8,15 +9,20 @@ import org.bukkit.entity.Player;
 class Kicker implements Runnable {
 	public static int[] kickThresholds;
 	public static Warning[] warnings;
-	public static String message_on_kick;
-	public static String amIStillAlivePlayer;  // sends a message to this player
+	public static String message_on_kick;	
 	
+	public static List<String> amIStillAlivePlayer;  // sends a message to this player
+
 	public void run() {				
 			if(amIStillAlivePlayer != null){			
-					Player p;
-					if((p = AFKPGC.plugin.getServer().getPlayer(amIStillAlivePlayer)) != null){
-						p.sendMessage("AFKPGC plugin is still alive");						
-					}	
+					Player p;					
+					for(String i:amIStillAlivePlayer){
+						if(i != null){
+							if((p = AFKPGC.plugin.getServer().getPlayer(i)) != null) Message.send(p,16);
+						} else {
+							Message.send(16);
+						}
+					}
 					amIStillAlivePlayer = null;
 			}		   
 		
@@ -25,9 +31,10 @@ class Kicker implements Runnable {
 		   int numberOfPlayersOnline = LastActivity.lastActivities.size();
 		   if(numberOfPlayersOnline == 0) return;
 		   if(numberOfPlayersOnline > kickThresholds.length) {			   
-			   Message.send(13);
-			   return;
-		   }
+			   //Message.send(13);
+			   LastActivity.FixInconsitencies();
+			   numberOfPlayersOnline = LastActivity.lastActivities.size();
+		   }			   
 		   
 		   int warningslen = warnings.length;
 		   

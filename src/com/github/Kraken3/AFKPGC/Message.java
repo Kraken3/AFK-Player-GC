@@ -14,6 +14,7 @@ public class Message {
 		formatter.format(str, args);		
 		if(player != null) player.sendMessage(sb.toString());
 		else AFKPGC.logger.info(sb.toString());
+		formatter.close();
 	}
 	
 	public static void send(String str, Object... args){
@@ -21,20 +22,23 @@ public class Message {
 		Formatter formatter = new Formatter(sb, Locale.US);
 		formatter.format(str, args);
 		AFKPGC.logger.info(sb.toString());
+		formatter.close();
 	}
 	
 	public static void warning(String str, Object... args){
 			StringBuilder sb = new StringBuilder();	
 			Formatter formatter = new Formatter(sb, Locale.US);
 			formatter.format(str, args);
-			AFKPGC.logger.log(Level.WARNING, sb.toString());		
+			AFKPGC.logger.log(Level.WARNING, sb.toString());	
+			formatter.close();
 	}
 	
 	public static void error(String str, Object... args){
 		StringBuilder sb = new StringBuilder();	
 		Formatter formatter = new Formatter(sb, Locale.US);
 		formatter.format(str, args);
-		AFKPGC.logger.log(Level.SEVERE, sb.toString());		
+		AFKPGC.logger.log(Level.SEVERE, sb.toString());	
+		formatter.close();
 	}
 	
 	public static void send(Player player, int str, Object... args){

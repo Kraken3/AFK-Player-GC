@@ -1,9 +1,9 @@
 name: AFKPGC
 main: com.github.Kraken3.AFKPGC.AFKPGC
 author: Kraken3
-version: 1.1
+version: 1.2.2
 commands:
    afkpgc:
       description: AFK Player GC - mod for kicking inactive players
-      usage: /afkpgc times | list | stop | reload
+      usage: /afkpgc times | list | stop | reload | info
       permission-message: You don't have <permission>
